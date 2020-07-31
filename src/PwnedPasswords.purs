@@ -51,7 +51,7 @@ pwned :: String -> Aff (Either Error PasswordStatus)
 pwned password =
   runExceptT do
     hashPrefix <- except $ note HashError $ slice 0 5 hash
-    hashSuffix <- except $ map mkHashSuffix <<< note HashError $ slice 5 40 hash
+    hashSuffix <- except $ map mkHashSuffix $ note HashError $ slice 5 40 hash
     res <-
       ExceptT
         $ map (lmap AffjaxError)
