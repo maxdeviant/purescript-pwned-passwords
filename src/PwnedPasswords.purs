@@ -18,8 +18,15 @@ import Data.Tuple (Tuple(..), fst)
 import Effect.Aff (Aff)
 import Sha1 (sha1)
 
+-- | The status of a password after checking it against [Pwned Passwords](https://haveibeenpwned.com/Passwords).
 data PasswordStatus
+  -- | The password was not found in the Pwned Passwords index. This does
+  -- | not necessarily mean it is a *good* password, just that it has not
+  -- | appeared in any data breaches that Pwned Passwords has in its index.
   = NotFound
+  -- | The password appears in a data breach indexed by Pwned Passwords. The
+  -- | number indicates the number of times the password has been seen. This
+  -- | password should never be used!
   | Pwned Int
 
 instance showPasswordStatus :: Show PasswordStatus where
@@ -38,6 +45,8 @@ instance hashSuffixShow :: Show HashSuffix where
 instance hashSuffixEq :: Eq HashSuffix where
   eq (HashSuffix a) (HashSuffix b) = a `eq` b
 
+-- | Checks the specified password against [Pwned Passwords](https://haveibeenpwned.com/Passwords)
+-- | to determine whether it is safe for use.
 pwned :: Partial => String -> Aff (Either Error PasswordStatus)
 pwned password = do
   result <- Ax.get ResponseFormat.string url
