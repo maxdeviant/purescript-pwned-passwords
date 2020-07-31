@@ -1,16 +1,19 @@
 module PwnedPasswords
   ( PasswordStatus(..)
+  , Error
+  , printError
   , pwned
   ) where
 
 import Prelude
-import Affjax (Error)
 import Affjax as Ax
 import Affjax.ResponseFormat as ResponseFormat
+import Control.Monad.Except (ExceptT(..), except, runExceptT)
 import Data.Array (find, mapMaybe)
-import Data.Either (Either(..))
+import Data.Bifunctor (lmap)
+import Data.Either (Either, note)
 import Data.Int as Int
-import Data.Maybe (Maybe(..), fromJust)
+import Data.Maybe (Maybe(..))
 import Data.String (Pattern(..), split, toUpper)
 import Data.String.CodeUnits (slice)
 import Data.String.Utils (lines)
@@ -33,30 +36,38 @@ instance showPasswordStatus :: Show PasswordStatus where
   show NotFound = "NotFound"
   show (Pwned count) = "Pwned " <> show count
 
+data Error
+  = AffjaxError Ax.Error
+  | HashError
+
+printError :: Error -> String
+printError (AffjaxError err) = Ax.printError err
+
+printError HashError = "There was a problem hashing the password."
+
 -- | Checks the specified password against [Pwned Passwords](https://haveibeenpwned.com/Passwords)
 -- | to determine whether it is safe for use.
-pwned :: Partial => String -> Aff (Either Error PasswordStatus)
-pwned password = do
-  result <- Ax.get ResponseFormat.string url
-  pure
-    $ case result of
-        Left err -> Left err
-        Right res ->
-          res.body
-            # lines
-            # mapMaybe parseEntry
-            # find (fst >>> eq hashSuffix)
-            # case _ of
-                Just (Tuple _ occurrences) -> Right $ Pwned occurrences
-                Nothing -> Right $ NotFound
+pwned :: String -> Aff (Either Error PasswordStatus)
+pwned password =
+  runExceptT do
+    hashPrefix <- except $ note HashError $ slice 0 5 hash
+    hashSuffix <- except $ map mkHashSuffix <<< note HashError $ slice 5 40 hash
+    res <-
+      ExceptT
+        $ map (lmap AffjaxError)
+        $ Ax.get ResponseFormat.string
+        $ "https://api.pwnedpasswords.com/range/"
+        <> hashPrefix
+    pure
+      $ res.body
+      # lines
+      # mapMaybe parseEntry
+      # find (fst >>> eq hashSuffix)
+      # case _ of
+          Just (Tuple _ occurrences) -> Pwned occurrences
+          Nothing -> NotFound
   where
   hash = sha1 password
-
-  hashPrefix = fromJust <<< slice 0 5 $ hash
-
-  hashSuffix = mkHashSuffix <<< fromJust <<< slice 5 40 $ hash
-
-  url = "https://api.pwnedpasswords.com/range/" <> hashPrefix
 
 data HashSuffix
   = HashSuffix String
