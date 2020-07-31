@@ -33,18 +33,6 @@ instance showPasswordStatus :: Show PasswordStatus where
   show NotFound = "NotFound"
   show (Pwned count) = "Pwned " <> show count
 
-data HashSuffix
-  = HashSuffix String
-
-mkHashSuffix :: String -> HashSuffix
-mkHashSuffix = HashSuffix <<< toUpper
-
-instance hashSuffixShow :: Show HashSuffix where
-  show (HashSuffix suffix) = "HashSuffix " <> suffix
-
-instance hashSuffixEq :: Eq HashSuffix where
-  eq (HashSuffix a) (HashSuffix b) = a `eq` b
-
 -- | Checks the specified password against [Pwned Passwords](https://haveibeenpwned.com/Passwords)
 -- | to determine whether it is safe for use.
 pwned :: Partial => String -> Aff (Either Error PasswordStatus)
@@ -69,6 +57,18 @@ pwned password = do
   hashSuffix = mkHashSuffix <<< fromJust <<< slice 5 40 $ hash
 
   url = "https://api.pwnedpasswords.com/range/" <> hashPrefix
+
+data HashSuffix
+  = HashSuffix String
+
+mkHashSuffix :: String -> HashSuffix
+mkHashSuffix = HashSuffix <<< toUpper
+
+instance hashSuffixShow :: Show HashSuffix where
+  show (HashSuffix suffix) = "HashSuffix " <> suffix
+
+instance hashSuffixEq :: Eq HashSuffix where
+  eq (HashSuffix a) (HashSuffix b) = a `eq` b
 
 parseEntry :: String -> Maybe (Tuple HashSuffix Int)
 parseEntry line = case split (Pattern ":") line of
