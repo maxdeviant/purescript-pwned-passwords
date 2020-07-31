@@ -66,7 +66,7 @@ pwned password = do
 
   hashPrefix = fromJust <<< slice 0 5 $ hash
 
-  hashSuffix = mkHashSuffix $ fromJust <<< slice 5 40 $ hash
+  hashSuffix = mkHashSuffix <<< fromJust <<< slice 5 40 $ hash
 
   url = "https://api.pwnedpasswords.com/range/" <> hashPrefix
 
