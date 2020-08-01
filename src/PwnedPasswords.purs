@@ -50,14 +50,16 @@ printError HashError = "There was a problem hashing the password."
 pwned :: String -> Aff (Either Error PasswordStatus)
 pwned password =
   runExceptT do
+    let
+      hash = sha1 password
     hashPrefix <- except $ note HashError $ slice 0 5 hash
     hashSuffix <- except $ map mkHashSuffix $ note HashError $ slice 5 40 hash
+    let
+      url = "https://api.pwnedpasswords.com/range/" <> hashPrefix
     res <-
       ExceptT
         $ map (lmap AffjaxError)
-        $ Ax.get ResponseFormat.string
-        $ "https://api.pwnedpasswords.com/range/"
-        <> hashPrefix
+        $ Ax.get ResponseFormat.string url
     pure
       $ res.body
       # lines
@@ -66,8 +68,6 @@ pwned password =
       # case _ of
           Just (Tuple _ occurrences) -> Pwned occurrences
           Nothing -> NotFound
-  where
-  hash = sha1 password
 
 data HashSuffix
   = HashSuffix String
