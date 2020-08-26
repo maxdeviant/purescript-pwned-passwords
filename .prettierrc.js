@@ -1,4 +1,1 @@
-module.exports = {
-  singleQuote: true,
-  arrowParens: 'avoid',
-};
+module.exports = require('purlin/config/prettierrc');
