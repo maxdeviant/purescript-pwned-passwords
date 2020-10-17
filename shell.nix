@@ -16,6 +16,7 @@ stdenv.mkDerivation {
   buildInputs = [
     easy-ps.purs
     easy-ps.spago
+    easy-ps.pulp
     yarn
   ];
 }
