@@ -1,0 +1,25 @@
+{
+    "name": "purescript-pwned-passwords",
+    "license": [
+        "MIT"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/maxdeviant/purescript-pwned-passwords"
+    },
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "output"
+    ],
+    "dependencies": {
+        "purescript-affjax": "^v10.1.0",
+        "purescript-console": "^v4.4.0",
+        "purescript-effect": "^v2.0.1",
+        "purescript-integers": "^v4.0.0",
+        "purescript-psci-support": "^v4.0.0",
+        "purescript-stringutils": "^v0.0.10",
+        "purescript-transformers": "^v4.2.0"
+    }
+}
