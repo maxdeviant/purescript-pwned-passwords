@@ -8,7 +8,8 @@
   "scripts": {
     "format": "purlin format",
     "build": "purlin build",
-    "test": "purlin test"
+    "test": "purlin test",
+    "bump-version": "purlin bump-version"
   },
   "dependencies": {
     "crypto-js": "^4.0.0"
