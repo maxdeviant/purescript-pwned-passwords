@@ -1,4 +1,6 @@
-{ name = "my-project"
+{ name = "pwned-passwords"
+, license = "MIT"
+, repository = "https://github.com/maxdeviant/purescript-pwned-passwords"
 , dependencies =
   [ "affjax"
   , "console"
