@@ -14,12 +14,21 @@
         "output"
     ],
     "dependencies": {
-        "purescript-affjax": "^v10.1.0",
-        "purescript-console": "^v4.4.0",
-        "purescript-effect": "^v2.0.1",
-        "purescript-integers": "^v4.0.0",
-        "purescript-psci-support": "^v4.0.0",
-        "purescript-stringutils": "^v0.0.10",
-        "purescript-transformers": "^v4.2.0"
+        "purescript-aff": "^v6.0.0",
+        "purescript-affjax": "^v12.0.0",
+        "purescript-arrays": "^v6.0.1",
+        "purescript-bifunctors": "^v5.0.0",
+        "purescript-console": "^v5.0.0",
+        "purescript-effect": "^v3.0.0",
+        "purescript-either": "^v5.0.0",
+        "purescript-integers": "^v5.0.0",
+        "purescript-maybe": "^v5.0.0",
+        "purescript-partial": "^v3.0.0",
+        "purescript-prelude": "^v5.0.1",
+        "purescript-psci-support": "^v5.0.0",
+        "purescript-strings": "^v5.0.0",
+        "purescript-stringutils": "^v0.0.11",
+        "purescript-transformers": "^v5.1.0",
+        "purescript-tuples": "^v6.0.1"
     }
 }
